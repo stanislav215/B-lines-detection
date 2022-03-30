@@ -18,10 +18,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from functools import reduce
 import zipfile
-"""
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-"""
-
+from tensorflow.keras.layers import Conv2D,BatchNormalization,GlobalAveragePooling2D,Dense,MaxPooling2D,InputLayer,Flatten,Dropout
+from tensorflow.keras import Sequential

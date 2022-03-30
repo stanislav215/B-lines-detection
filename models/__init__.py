@@ -64,3 +64,21 @@ def make_model(input_shape, num_classes):
     x = layers.Dropout(0.5)(x)
     outputs = layers.Dense(units, activation=activation)(x)
     return keras.Model(inputs, outputs)
+
+def create_model(input_shape):
+    model = Sequential()
+    model.add(InputLayer(input_shape = input_shape))
+    model.add(Conv2D(filters = 256, kernel_size = (3, 3), activation = 'relu'))
+    model.add(BatchNormalization())
+    model.add(MaxPooling2D(pool_size = (2, 2)))
+    model.add(Conv2D(filters = 128, kernel_size = (3, 3), activation = 'relu'))
+    model.add(BatchNormalization())
+    model.add(MaxPooling2D(pool_size = (2, 2)))
+    model.add(Conv2D(filters = 64, kernel_size = (3, 3), activation = 'relu'))
+    model.add(BatchNormalization())
+    model.add(GlobalAveragePooling2D())
+    model.add(Dense(256, activation = 'relu', kernel_regularizer='l1_l2'))
+    model.add(Dropout(0.5))
+    model.add(Dense(1, activation = 'sigmoid'))
+    model.summary()
+    return model
