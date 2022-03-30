@@ -220,7 +220,63 @@ class List(list):
         self = List(item for sublist in self for item in sublist)
         return self
 
-def getDataset(id,output):
+def getDataset(id,output,output_dir="./"):
     gdown.download(id=id, output=output, quiet=False)
     with zipfile.ZipFile(f"./{output}", 'r') as zip_ref:
-        zip_ref.extractall("./")
+        zip_ref.extractall(output_dir)
+
+def printSamplesDistrbution(source_path):
+    classes = glob.glob(source_path + "/*")
+
+    if classes[0].split("/")[-1] == "no-lines":
+        no_lines = classes[0]
+        b_lines = classes[1]
+    else:
+        no_lines = classes[1]
+        b_lines = classes[0]
+
+    b_lines_paths = glob.glob(b_lines + "/*")
+    no_lines_paths = glob.glob(no_lines + "/*")
+    b_lines_len = len(b_lines_paths)
+    no_lines_len = len(no_lines_paths)
+
+    number_of_videos = b_lines_len + no_lines_len
+    number_of_frames = 0
+    video_len_max = 0
+    video_len_min = 1000
+    number_of_frames_blines = 0
+    number_of_frames_nolines = 0
+
+    for video_path in b_lines_paths:
+       video_len = len(glob.glob(video_path + "/*"))
+       number_of_frames_blines+=video_len
+    for video_path in no_lines_paths:
+       video_len = len(glob.glob(video_path + "/*"))
+       number_of_frames_nolines+=video_len
+    for video_path in (b_lines_paths + no_lines_paths):
+        video_len = len(glob.glob(video_path + "/*"))
+        number_of_frames += video_len
+        if video_len_max < video_len:
+            video_len_max = video_len
+        if video_len_min > video_len:
+            video_len_min = video_len
+
+    print(f"number of b-lines videos: {b_lines_len}")
+    print(f"number of no-lines videos: {no_lines_len}")
+    print(f"number of b-lines frames: {number_of_frames_blines}")
+    print(f"number of no-lines frames: {number_of_frames_nolines}")
+    print(f"average number of frames: {number_of_frames // number_of_videos}")
+    print(f"max length of video: {video_len_max}")
+    print(f"min length of video: {video_len_min}")
+
+    plt.bar(["b-lines", "no-lines"], [b_lines_len,no_lines_len])
+    return b_lines_len,no_lines_len
+
+def loadModel(model_name, models_root_path="./model/"):
+    model_path = models_root_path + model_name
+    with open(model_path + "/trainingInfo.pickle", 'rb') as f:
+        trainingInfo = dill.load(f)
+    model = tf.keras.Model().from_config(trainingInfo["model_config"])
+    model.load_weights(model_path + "/model.h5")
+    print(trainingInfo["hyperParameters"])
+    return model, trainingInfo,trainingInfo["hyperParameters"]["input_image_size"],trainingInfo["hyperParameters"]["n_channels"]
