@@ -1,6 +1,37 @@
 #@title Util Functions
 
 from diploma import *
+
+def getExampleModel():
+    return """
+    {
+    "frame_path":    str, 
+    "current_frame": int,
+    "total_frames":  int,
+    "class_num":     int, # 0 for no-lines 1 for b-lines
+    "patient_ID":    int, 
+    "video_id":      int,
+    "Resolution":    str,
+    "Probe":         str
+    }
+    """   
+
+def get_train_and_val(test_fold,examples):
+    examples_save = copy.deepcopy(examples)
+    train = examples.filter(lambda x: x not in test_fold)
+    train,val = splitDatasetPaths(train,split=0.2,MAX_PATIENT_EXAMPLES_PER_SET_RATIO=0.4,only_videos_in_split=False)
+    train = equalize(train)
+    return train, val
+
+def get_test_folds(examples, number_of_folds=5):
+    test_sets = []
+    saved_examples = copy.deepcopy(examples)
+    for i in range(1,number_of_folds):
+        saved_examples, test = splitDatasetPaths(saved_examples, split=1/(number_of_folds+1-i),MAX_PATIENT_EXAMPLES_PER_SET_RATIO=0.4, only_videos_in_split=True)
+        test_sets.append(test)
+    test_sets.append(equalize(saved_examples))
+    return test_sets
+
 def splitDatasetPaths(examples,split=0.2, MAX_PATIENT_EXAMPLES_PER_SET_RATIO=0.5, only_videos_in_split=False):
     len_b_lines = examples.reduce(lambda x, y: x + y["class_num"],0)
 
@@ -244,7 +275,6 @@ def loadModel(model_name, models_root_path="./model/"):
     print(trainingInfo["hyperParameters"])
     return model, trainingInfo,trainingInfo["hyperParameters"]["input_image_size"],trainingInfo["hyperParameters"]["n_channels"]
 
-from diploma import *
 class List(list):
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(args[0])

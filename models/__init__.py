@@ -7,7 +7,7 @@ def vgg_block(num_convs, num_channels):
     blk.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
     return blk
 
-def vgg(conv_arch):
+def get_vgg_model(conv_arch):
     net = tf.keras.models.Sequential()
     # The convulational part
     for (num_convs, num_channels) in conv_arch:
@@ -22,7 +22,7 @@ def vgg(conv_arch):
         tf.keras.layers.Dense(1)]))
     return net
 
-def make_model(input_shape, num_classes):
+def get_resnet_model(input_shape, residuals=[128, 256,512]):
     inputs = keras.Input(shape=input_shape)
 
 
@@ -36,7 +36,7 @@ def make_model(input_shape, num_classes):
 
     previous_block_activation = x  
 
-    for size in [128, 256,512]:
+    for size in residuals:
         x = layers.Activation("relu")(x)
         x = layers.Conv2D(size, 3, padding="same")(x)
         x = layers.BatchNormalization()(x)
@@ -65,7 +65,7 @@ def make_model(input_shape, num_classes):
     outputs = layers.Dense(units, activation=activation)(x)
     return keras.Model(inputs, outputs)
 
-def create_model(input_shape):
+def get_simple_cnn(input_shape):
     model = Sequential()
     model.add(InputLayer(input_shape = input_shape))
     model.add(Conv2D(filters = 256, kernel_size = (3, 3), activation = 'relu'))
