@@ -214,10 +214,12 @@ def checkDataset(train,test,val):
      print(f"isvalid test: {checkOrder(test) and not hasTestDuplicates}")
      print(f"isvalid train: {checkOrder(val) and not hasValDuplicates}")
 
-def getDataset(id,output,output_dir="./"):
+def getFileZip(id,output,output_dir="./"):
     gdown.download(id=id, output=output, quiet=False)
     with zipfile.ZipFile(f"./{output}", 'r') as zip_ref:
         zip_ref.extractall(output_dir)
+def getFile(id):
+    gdown.download(id=id)
 
 def printSamplesDistrbution(source_path):
     classes = glob.glob(source_path + "/*")
