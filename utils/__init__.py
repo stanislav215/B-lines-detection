@@ -16,10 +16,10 @@ def getExampleModel():
     }
     """   
 
-def get_train_and_val(test_fold,examples):
+def get_train_and_val(test_fold,examples, val_split=0.2):
     examples_save = copy.deepcopy(examples)
     train = examples.filter(lambda x: x not in test_fold)
-    train,val = splitDatasetPaths(train,split=0.2,MAX_PATIENT_EXAMPLES_PER_SET_RATIO=0.4,only_videos_in_split=False)
+    train,val = splitDatasetPaths(train,split=val_split,MAX_PATIENT_EXAMPLES_PER_SET_RATIO=0.4,only_videos_in_split=False)
     train = equalize(train)
     return train, val
 
