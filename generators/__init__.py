@@ -25,7 +25,7 @@ class DataGenerator(keras.utils.Sequence):
         np.random.shuffle(self.itemsPaths)
         
     def get_labels(self):
-        return np.array(self.itemsPaths.map(lambda clip: clip[0]["class_num"]))
+        return np.array(self.itemsPaths.map(lambda example: example["class_num"]))
 
     def on_epoch_end(self):
         'Updates indexes after each epoch'
@@ -85,7 +85,7 @@ class DataGenerator_OLD(keras.utils.Sequence):
         np.random.shuffle(self.itemsPaths)
 
     def get_labels(self):
-        return np.array(self.itemsPaths.map(lambda clip: clip[0]["class_num"]))
+        return np.array(self.itemsPaths.map(lambda example: example["class_num"]))
 
     def on_epoch_end(self):
         'Updates indexes after each epoch'
