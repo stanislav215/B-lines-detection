@@ -1,4 +1,5 @@
 from diploma import *
+from sklearn.metrics import confusion_matrix, classification_report
 
 
 
@@ -32,7 +33,7 @@ def false_negative_rate(confusion_matrix):
 def false_positive_rate(confusion_matrix):
     tn, fp, fn, tp = confusion_matrix
     try:
-      return fn / (fn + tp)
+      return fp / (fp + tn)
     except:
         return 0
 
