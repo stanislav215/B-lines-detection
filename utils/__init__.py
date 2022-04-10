@@ -313,3 +313,20 @@ class List(list):
         self = List(item for sublist in self for item in sublist)
         return self
 
+def create_clips(clips, frames_to_classify):
+    clips = copy.deepcopy(clips)
+    new_clips = List([])
+    for clip in clips:
+        clip_len = len(clip)
+        step = clip_len//frames_to_classify
+        if step == 0:
+            raise ValueError("Problem")
+        clip_chosen_examples = List([])
+        for index, example in enumerate(clip):
+            if index % step == 0:
+                clip_chosen_examples.append(example)
+        new_clips.append(clip_chosen_examples[:frames_to_classify])
+    return new_clips
+
+def to_videos_arrays(examples):
+    return get_video_ids(examples).map(lambda id: get_video_from_dataset(examples,id))
